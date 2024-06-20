@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'strapi-app',
+      name: 'TEMP',
       script: 'npm',
       args: 'start',
       env: {
