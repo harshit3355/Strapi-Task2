@@ -52,5 +52,5 @@ jobs:
             cd /home/${{secrets.EC2_USER}}/TEMP
             ls -l
             npm install 
-            npm run develop
+            npm start
           EOF
