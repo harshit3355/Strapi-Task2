@@ -34,19 +34,23 @@ jobs:
         run: |
           echo "${EC2_KEY}" > private_key.pem
           chmod 600 private_key.pem
-          
+
           echo "Testing SSH connection..."
           ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST "echo 'SSH connection successful.'"
-          
+
+          echo "Ensuring TEMP directory exists..."
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST "mkdir -p /home/$EC2_USER/TEMP"
+
           echo "Copying .env file..."
           scp -o StrictHostKeyChecking=no -i private_key.pem .env $EC2_USER@$EC2_HOST:/home/$EC2_USER/TEMP/.env
-          
+
           echo "Synchronizing project files..."
           rsync -avz -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" --exclude="node_modules" ./ $EC2_USER@$EC2_HOST:/home/$EC2_USER/TEMP
-          
+
           echo "Running remote commands..."
           ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST << 'EOF'
             cd /home/$EC2_USER/TEMP
+            ls -l
             npm install 
             pm2 restart ecosystem.config.js --env production
           EOF
